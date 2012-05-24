@@ -1,0 +1,5 @@
+CodeFreakout.SeeedStudio.GPRSShield
+
+Driver for the GPRS Shield designed by Seeed Studio (http://www.seeedstudio.com/depot/gprs-shield-p-779.html?cPath=132_134).  
+Provides basic HTTP POST and SMS support.  Built around the Netduino platform but could be adapted to other .NET Micro based 
+development boards.  Requires .NET Micro 4.2.
