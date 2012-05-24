@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CodeFreakout.SeeedStudio.GPRSShield")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Driver for the Seeed Studio GPRS Shield")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Code Freakout")]
 [assembly: AssemblyProduct("CodeFreakout.SeeedStudio.GPRSShield")]

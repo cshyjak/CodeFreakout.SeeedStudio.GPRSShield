@@ -1,3 +1,9 @@
 CodeFreakout.SeeedStudio.GPRSShield
 
 Driver for the GPRS Shield designed by Seeed Studio (http://www.seeedstudio.com/depot/gprs-shield-p-779.html?cPath=132_134).  Provides basic HTTP POST and SMS support.  Built around the Netduino platform but could be adapted to other .NET Micro based development boards.  Requires .NET Micro 4.2.
+
+A Nuget package is available in the Nuget gallery if you just want to use the driver.
+
+Example Code:
+var gsm = new GPRSShield("apn.somewirelesscompany.com", SerialPorts.COM1);
+gsm.Post("baseurl.com", 80, "/somePathOnThatUrl", "application/json","{\"Key\":\"Value\"}");
