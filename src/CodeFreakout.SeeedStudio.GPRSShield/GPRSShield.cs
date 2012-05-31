@@ -34,7 +34,16 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
                 SendCommand("AT\r", true); //Echo OFF
             }
 
+            //Configure the modem to use auto-bauding
+            SendCommand("AT+IPR=0\r");
+
             InitializeModem();
+        }
+
+        public string GetInternationMobileEquipmentIdentifier()
+        {
+            SendCommand("AT+GSN", true);
+            return _lastResult;
         }
 
         private void SerialOnDataReceived(object sender, SerialDataReceivedEventArgs serialDataReceivedEventArgs)

@@ -7,3 +7,6 @@ A Nuget package is available in the Nuget gallery if you just want to use the dr
 Example Code:
 var gsm = new GPRSShield("apn.somewirelesscompany.com", SerialPorts.COM1);
 gsm.Post("baseurl.com", 80, "/somePathOnThatUrl", "application/json","{\"Key\":\"Value\"}");
+
+NOTE:
+When adding a reference to the project when using the nuget package it seems that Nuget is choosing the wrong dll to reference.  Please manually remove the reference and add a reference to the dll located in the netmf42 folder.
