@@ -20,12 +20,13 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
             _apn = apn;
 
             _serial = new SerialPort(portName, 19200, Parity.None, 8, StopBits.One);
-            
+            _serial.Handshake = Handshake.RequestToSend;
+
             _serial.DataReceived += SerialOnDataReceived;
 
             _serial.Open();
 
-            Thread.Sleep(30000);
+            Thread.Sleep(15000);
             
             while (_lastResult.IndexOf("OK") < 0)
             {
@@ -34,8 +35,8 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
                 SendCommand("AT\r", true); //Echo OFF
             }
 
-            //Configure the modem to use auto-bauding
-            SendCommand("AT+IPR=0\r");
+            //Reset to factory defaults
+            SendCommand("AT&F0\r");
 
             InitializeModem();
         }
