@@ -3,6 +3,7 @@ using System.IO.Ports;
 using System.Text;
 using System.Threading;
 using Microsoft.SPOT;
+using Microsoft.SPOT.Hardware;
 
 namespace CodeFreakout.SeeedStudio.GPRSShield
 {
@@ -14,10 +15,13 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
         private string _lastResult = "";
         private readonly string _apn;
         private int _failures = 0;
+        private readonly OutputPort _power;
         
         public GPRSShield(string apn, string portName)
         {
             _apn = apn;
+
+            _power = new OutputPort(Cpu.Pin.GPIO_Pin9, false);
 
             _serial = new SerialPort(portName, 19200, Parity.None, 8, StopBits.One);
             _serial.Handshake = Handshake.RequestToSend;
@@ -39,6 +43,13 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
             SendCommand("AT&F0\r");
 
             InitializeModem();
+        }
+
+        public void TogglePower()
+        {
+            _power.Write(true);
+            Thread.Sleep(2500);
+            _power.Write(false);
         }
 
         public string GetInternationMobileEquipmentIdentifier()
@@ -77,6 +88,9 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
         private void InitializeModem()
         {
             SendCommand("ATE0\r", true); //Echo OFF
+            SendCommand("AT+CMGF=1\r", true); //Set text mode
+            SendCommand("AT+CSCS=\"GSM\"\r"); //Set GMS Character text mode
+            SendCommand("AT+CGATT=1\r", true); //Force GPRS
             SendCommand("AT+CIPMUX=0\r", true); //Single IP
             SendCommand("AT+CIPMODE=0\r", true); //Normal Mode
             SendCommand("AT+CSTT=\"" + _apn + "\"\r", true); //Set APN
@@ -90,8 +104,9 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
             var errorOccurred = false;
 
             _serial.Flush();
-
+            
             SendCommand("AT+CIPSTART=\"TCP\",\"" + host + "\",\"" + port + "\"\r", true);
+
             Debug.Print(_lastResult);
 
             while (_lastResult.IndexOf("CONNECT OK") < 0 && _lastResult.IndexOf("ALREADY CONNECT") < 0 && connectAttempts <= 3)
@@ -102,6 +117,7 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
 
             if (_lastResult.IndexOf("CONNECT OK") >= 0 || _lastResult.IndexOf("ALREADY CONNECT") >= 0)
             {
+                SendCommand("AT+CIPSTATUS\r", true);
                 Thread.Sleep(1000);
                 SendCommand("AT+CIPSEND\r", true);
 
@@ -161,6 +177,7 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
             Debug.Print("Failures: " + _failures);
 
             SendCommand("AT+CIPCLOSE\r", true);
+            SendCommand("AT+CIPSHUT\r", true);
             InitializeModem();    
         }
 
