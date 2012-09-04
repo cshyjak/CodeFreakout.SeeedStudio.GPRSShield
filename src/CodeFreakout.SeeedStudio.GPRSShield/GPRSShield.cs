@@ -181,7 +181,7 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
             InitializeModem();    
         }
 
-        private void SendCommand(string command, bool waitForResponse = false, int timeout = 1000)
+        public void SendCommand(string command, bool waitForResponse = false, int timeout = 1000)
         {
             _serialDataFinished.Reset();
             _lastResult = "";
@@ -196,7 +196,7 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
             }
         }
 
-        private void SendEndOfDataCommand()
+        public void SendEndOfDataCommand()
         {
             _serialDataFinished.Reset();
             _lastResult = "";
