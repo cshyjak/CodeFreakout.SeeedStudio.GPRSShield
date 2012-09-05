@@ -186,9 +186,22 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
 
             Debug.Print("Failures: " + _failures);
 
-            SendCommand("AT+CIPCLOSE\r", true);
-            SendCommand("AT+CIPSHUT\r", true);
-            InitializeModem();    
+            if (_failures % 2 == 0)
+            {
+                SendCommand("AT+CIPSHUT\r", true);
+
+                InitializeModem();    
+            }
+            else
+            {
+                SendCommand("AT+CIPCLOSE\r", true);    
+            }
+
+            //Sleep for a second allowing events to process to hopefully sync up the serial data communication
+            for (int i = 1; i <= 10; i++)
+            {
+                Thread.Sleep(100);
+            }
         }
 
         public void SendCommand(string command, bool waitForResponse = false, int timeout = 1000)
