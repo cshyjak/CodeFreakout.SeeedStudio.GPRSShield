@@ -30,7 +30,7 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
 
             _serial.Open();
 
-            Thread.Sleep(15000);
+            Thread.Sleep(10000);
             
             while (_lastResult.IndexOf("OK") < 0)
             {
@@ -38,9 +38,6 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
 
                 SendCommand("AT\r", true); //Echo OFF
             }
-
-            //Reset to factory defaults
-            SendCommand("AT&F0\r");
 
             InitializeModem();
         }
@@ -87,15 +84,28 @@ namespace CodeFreakout.SeeedStudio.GPRSShield
 
         private void InitializeModem()
         {
-            SendCommand("ATE0\r", true); //Echo OFF
-            SendCommand("AT+CMGF=1\r", true); //Set text mode
-            SendCommand("AT+CSCS=\"GSM\"\r"); //Set GMS Character text mode
-            SendCommand("AT+CGATT=1\r", true); //Force GPRS
-            SendCommand("AT+CIPMUX=0\r", true); //Single IP
-            SendCommand("AT+CIPMODE=0\r", true); //Normal Mode
-            SendCommand("AT+CSTT=\"" + _apn + "\"\r", true); //Set APN
-            SendCommand("AT+CIICR\r", true);
+            SendCommand("ATE0\r", true); //Echo ON
+
             SendCommand("AT+CIFSR\r", true);
+
+            if (_lastResult.IndexOf("ERROR") >= 0)
+            {                
+                do
+                {
+                    SendCommand("AT+CIPSTATUS\r", true);
+
+                    if (_lastResult.IndexOf("IP INITIAL") >= 0)
+                    {
+                        SendCommand("AT+CSTT=\"" + _apn + "\"\r", true); //Set APN              
+                    }
+                    else if (_lastResult.IndexOf("IP START") >= 0)
+                    {
+                        SendCommand("AT+CIICR\r", true);
+                    }
+
+                    SendCommand("AT+CIFSR\r", true);
+                } while (_lastResult.IndexOf("ERROR") >= 0);
+            }
         }
 
         public void Post(string host, int port, string page, string contentType, string data)
